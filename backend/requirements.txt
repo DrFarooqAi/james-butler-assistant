@@ -1,0 +1,5 @@
+flask
+flask-cors
+groq
+edge-tts
+python-dotenv
