@@ -29,7 +29,7 @@ Everything is **free and open source**. No paid APIs.
 
 ---
 
-## Setup
+## Local Setup
 
 ### 1. Get a free Groq API key
 Sign up at [console.groq.com](https://console.groq.com) — no credit card required.
@@ -41,25 +41,46 @@ pip install -r requirements.txt
 ```
 
 ### 3. Add your API key
-Edit `backend/.env`:
+Create `backend/.env`:
 ```
 GROQ_API_KEY=your_key_here
 ```
 
-### 4. Set your Obsidian vault path
-Edit `backend/app.py` and update this line to your vault location:
-```python
-OBSIDIAN_VAULT = r"C:\Users\YourName\Documents"
+### 4. Obsidian vault (optional)
+To enable voice note-taking and vault search, add to `backend/.env`:
 ```
+OBSIDIAN_VAULT=C:\Users\YourName\Documents
+```
+If omitted, James works as a voice assistant without the notes features.
 
 ### 5. Run
 ```bash
-python app.py
+python backend/app.py
 ```
 
 Then open **Google Chrome** and go to `http://127.0.0.1:5000`
 
 > **Chrome is required** — Web Speech API does not work in other browsers.
+
+---
+
+## Quick Launch (Windows)
+
+Double-click **`Start James.bat`** — starts the server and opens your browser automatically.
+
+---
+
+## Deploy to Cloud (share with others)
+
+James can be deployed to [Render](https://render.com) for free — no credit card required.
+
+1. Fork this repo
+2. Sign up at [render.com](https://render.com) and create a new **Web Service** from your fork
+3. Render auto-detects `render.yaml` — click **Deploy**
+4. Add environment variable: `GROQ_API_KEY=your_key_here`
+5. Share the generated URL with anyone — they just need Chrome
+
+> Free tier spins down after 15 min of inactivity. First load after a pause takes ~30 seconds.
 
 ---
 
@@ -76,12 +97,6 @@ Notes are saved to a `James Notes/` folder inside your Obsidian vault as daily m
 
 ---
 
-## Quick Launch (Windows)
-
-Double-click **`Start James.bat`** — opens Chrome and starts the server automatically.
-
----
-
 ## Project Structure
 
 ```
@@ -93,7 +108,8 @@ Double-click **`Start James.bat`** — opens Chrome and starts the server automa
 │   ├── index.html          # UI + SVG butler avatar
 │   ├── style.css
 │   └── app.js              # Voice capture → API → audio playback
-└── Start James.bat         # One-click launcher
+├── render.yaml             # Render cloud deployment config
+└── Start James.bat         # One-click launcher (Windows)
 ```
 
 ---

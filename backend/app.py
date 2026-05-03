@@ -12,8 +12,9 @@ from groq import Groq
 load_dotenv()
 
 FRONTEND_DIR = os.path.join(os.path.dirname(__file__), "..", "frontend")
-OBSIDIAN_VAULT = r"C:\Users\ac\Documents"
-DAILY_NOTES_DIR = os.path.join(OBSIDIAN_VAULT, "James Notes")
+OBSIDIAN_VAULT = os.getenv("OBSIDIAN_VAULT", "")
+DAILY_NOTES_DIR = os.path.join(OBSIDIAN_VAULT, "James Notes") if OBSIDIAN_VAULT else ""
+VAULT_AVAILABLE = bool(OBSIDIAN_VAULT and os.path.isdir(OBSIDIAN_VAULT))
 
 app = Flask(__name__, static_folder=None)
 CORS(app)
@@ -118,7 +119,7 @@ def chat():
         return jsonify({"error": "No message provided"}), 400
 
     # Note-taking
-    if is_note_command(message):
+    if VAULT_AVAILABLE and is_note_command(message):
         content = extract_note_content(message)
         if content:
             date = save_note(content)
@@ -131,7 +132,7 @@ def chat():
 
     # Build system prompt — inject vault context if searching
     system = SYSTEM_PROMPT
-    if is_search_command(message):
+    if VAULT_AVAILABLE and is_search_command(message):
         results = search_vault(message)
         if results:
             context = "\n\n".join(f"[From '{r[1]}']:\n{r[2]}" for r in results)
@@ -185,4 +186,6 @@ def speak():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=True, port=5000)
+    port = int(os.getenv("PORT", 5000))
+    debug = os.getenv("FLASK_DEBUG", "false").lower() == "true"
+    app.run(host="0.0.0.0", debug=debug, port=port)
